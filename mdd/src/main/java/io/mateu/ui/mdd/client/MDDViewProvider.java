@@ -6,11 +6,14 @@ import com.google.common.base.Strings;
 import com.google.common.io.BaseEncoding;
 import io.mateu.ui.core.client.app.*;
 import io.mateu.ui.core.client.views.*;
-import io.mateu.mdd.core.data.Data;
-import io.mateu.mdd.core.data.MiViewProvider;
-import io.mateu.mdd.core.data.ViewProvider;
+import io.mateu.ui.core.shared.Data;
+import io.mateu.ui.core.shared.MiViewProvider;
+import io.mateu.ui.core.shared.ViewProvider;
+import io.mateu.ui.mdd.server.ERPServiceImpl;
 
+import java.lang.reflect.Constructor;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 

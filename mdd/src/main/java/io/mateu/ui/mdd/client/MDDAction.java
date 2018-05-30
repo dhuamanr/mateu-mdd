@@ -1,8 +1,7 @@
-package io.mateu.mdd.core.app;
+package io.mateu.ui.mdd.client;
 
-
-import io.mateu.mdd.core.MDD;
-import io.mateu.mdd.core.views.ListView;
+import io.mateu.ui.core.client.app.AbstractAction;
+import io.mateu.ui.mdd.server.interfaces.View;
 
 public class MDDAction extends AbstractAction {
 
@@ -27,6 +26,6 @@ public class MDDAction extends AbstractAction {
 
     @Override
     public void run() {
-        MDD.openCRUD(entityClass, getQueryFilters(), isModifierPressed());
+        MDD.openCRUD(entityClass, viewClass, getQueryFilters(), isModifierPressed());
     }
 }

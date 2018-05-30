@@ -2,11 +2,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>mdd-parent</artifactId>
-        <groupId>io.mateu</groupId>
+        <groupId>io.mateu.ui</groupId>
         <version>0.0.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>io.mateu.ui</groupId>
     <artifactId>mdd</artifactId>
     <packaging>jar</packaging>
 
@@ -43,6 +44,13 @@
             <artifactId>auto-service</artifactId>
             <version>1.0-rc4</version>
             <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>io.mateu.ui</groupId>
+            <artifactId>core</artifactId>
+            <version>0.0.1</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>

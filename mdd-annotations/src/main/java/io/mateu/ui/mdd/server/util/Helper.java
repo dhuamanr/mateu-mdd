@@ -1,41 +1,33 @@
-package io.mateu.ui.mdd.server.util;
+package io.mateu.mdd.core.util;
 
 
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.CSVPrinter;
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.repackaged.com.google.common.base.Strings;
+import com.google.common.base.Charsets;
+import com.google.common.hash.Hashing;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
-import io.mateu.ui.core.server.SQLTransaction;
-import io.mateu.ui.core.server.Utils;
-import io.mateu.ui.mdd.server.workflow.WorkflowEngine;
+import io.mateu.mdd.core.workflow.WorkflowEngine;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.jdom2.output.Format;
-import org.jdom2.output.XMLOutputter;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -43,22 +35,18 @@ import javax.persistence.Persistence;
 import javax.sql.DataSource;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-
-import static io.mateu.ui.core.server.BaseServerSideApp.fop;
 
 /**
  * Created by miguel on 13/9/16.
@@ -261,7 +249,7 @@ public class Helper {
     }
 
     public static String md5(String s) {
-        return s;
+        return Hashing.sha256().newHasher().putString(s, Charsets.UTF_8).hash().toString();
     }
 
     public static void setDataSource(DataSource dataSource) {

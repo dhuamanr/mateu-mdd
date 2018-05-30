@@ -1,7 +1,6 @@
-package io.mateu.mdd.core.app;
+package io.mateu.ui.mdd.client;
 
-
-import io.mateu.mdd.core.MDD;
+import io.mateu.ui.core.client.app.AbstractAction;
 
 public class MDDOpenEditorAction extends AbstractAction {
 
@@ -26,6 +25,6 @@ public class MDDOpenEditorAction extends AbstractAction {
 
     @Override
     public void run() {
-        MDD.openEditor(id, modifierPressed);
+        MDD.openEditor(entityClass, id, modifierPressed);
     }
 }
