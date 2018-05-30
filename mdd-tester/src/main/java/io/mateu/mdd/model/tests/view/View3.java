@@ -6,8 +6,6 @@ import io.mateu.ui.mdd.server.interfaces.Filtered;
 import io.mateu.ui.mdd.server.interfaces.View;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class View3 implements View<Booking> {
 
@@ -30,6 +28,5 @@ public class View3 implements View<Booking> {
     public String getOrderCriteria() {
         return null;
     }
-
 
 }
