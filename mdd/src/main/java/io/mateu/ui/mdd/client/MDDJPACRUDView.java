@@ -12,19 +12,17 @@ import io.mateu.ui.core.client.components.fields.*;
 import io.mateu.ui.core.client.components.fields.CalendarField;
 import io.mateu.ui.core.client.components.fields.grids.columns.*;
 import io.mateu.ui.core.client.views.*;
-import io.mateu.ui.core.shared.*;
-import io.mateu.ui.mdd.server.WizardPageVO;
-import io.mateu.ui.mdd.server.interfaces.ListView;
-import io.mateu.ui.mdd.server.interfaces.View;
-import io.mateu.ui.mdd.server.util.Helper;
+import io.mateu.mdd.core.data.*;
+import io.mateu.mdd.core.data.WizardPageVO;
+import io.mateu.mdd.core.interfaces.ListView;
+import io.mateu.mdd.core.util.Helper;
 import io.mateu.ui.mdd.server.util.JPATransaction;
 import io.mateu.ui.mdd.shared.ERPService;
-import io.mateu.ui.mdd.shared.MDDLink;
+import io.mateu.mdd.core.app.MDDLink;
 import io.mateu.ui.mdd.shared.MetaData;
 import org.apache.batik.util.RunnableQueue;
 
 import javax.persistence.EntityManager;
-import java.io.IOException;
 import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -192,7 +190,7 @@ public class MDDJPACRUDView extends BaseJPACRUDView {
                     ViewForm f = new ViewForm(this) {
                         @Override
                         public void setData(Data data, boolean only_) {
-                            if (data.containsKey("_links")) {
+                            if (data != null && data.containsKey("_links")) {
                                 for (Data x : data.getList("_links")) if (x != null) {
                                     MDDLink l = (MDDLink) x;
                                     x.set("_action", createAction(l));
@@ -699,7 +697,7 @@ public class MDDJPACRUDView extends BaseJPACRUDView {
 
         if (!Strings.isNullOrEmpty(viewClassName) && !viewClassName.equals(entityClassName)) {
             try {
-                io.mateu.ui.mdd.server.interfaces.ListView v = (io.mateu.ui.mdd.server.interfaces.ListView) Class.forName(viewClassName).newInstance();
+                ListView v = (ListView) Class.forName(viewClassName).newInstance();
 
                 String[] jpql = new String[1];
 
