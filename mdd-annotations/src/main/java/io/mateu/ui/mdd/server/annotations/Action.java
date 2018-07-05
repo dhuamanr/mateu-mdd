@@ -22,4 +22,6 @@ public @interface Action {
 
     boolean keepOpened() default false;
 
+    boolean notifyDone() default true;
+
 }

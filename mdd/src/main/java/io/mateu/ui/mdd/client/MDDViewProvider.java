@@ -31,7 +31,7 @@ public class MDDViewProvider implements ViewProvider {
         // el siguiente elemento lo utilizamos para saber si es nuestro
         String selector = (String) data.get("selector");
         if (selector != null) {
-            if (!selector.equals("mdd") && !viewAndParameters.contains("/mdd/")) return null;
+            if (!selector.equals("mdd") && !viewAndParameters.contains("/mdd/") && !selector.equals("pmo")) return null;
             else return viewAndParameters;
         } else return null;
     }
@@ -40,7 +40,7 @@ public class MDDViewProvider implements ViewProvider {
     public AbstractView getView(String viewName) {
         System.out.println("MDDViewProvider.getView(" + viewName + ")");
 
-        MDDJPACRUDView view =null;
+        AbstractView view =null;
 
         Map<Object, Object> data = MiViewProvider.parse(viewName);
 
@@ -52,7 +52,7 @@ public class MDDViewProvider implements ViewProvider {
 
             if (!Strings.isNullOrEmpty(selector)) {
 
-                if ("mdd".equals(selector)) {
+                if ("mdd".equals(selector) || "pmo".equals(selector)) {
 
                     if (data.get("area") == null || data.get("menu") == null) return new ForbiddenView();
 
@@ -71,73 +71,80 @@ public class MDDViewProvider implements ViewProvider {
                         vn = vn.substring(0, vn.indexOf("/"));
                     }
 
-                    String[] t = vn.split("\\.\\.", -1);
-                    String ed = t[0];
-                    String vd = t[1];
-                    String qf = (!Strings.isNullOrEmpty(t[2]))?new String(BaseEncoding.base64().decode(t[2]), Charsets.UTF_8):null;
-                    String jsonDatosIniciales = (!Strings.isNullOrEmpty(t[3]))?new String(BaseEncoding.base64().decode(t[3]), Charsets.UTF_8):null;
+                    if ("pmo".equals(selector)) {
 
+                        view = new PMOView(Class.forName(vn));
 
-
-
-                    view = new MDDJPACRUDView(new ERPServiceImpl().getMetaData(MateuUI.getApp().getUserData(), ed, vd, qf));
-                    view.setInitialData((jsonDatosIniciales != null) ? new Data(jsonDatosIniciales) : null);
-
-                    view.setGranted(data.get("area") != null && data.get("menu") != null);
-
-                    if (vn.endsWith("edit")) {
-
-                        String s = parametros;
-
-                        if (s.contains("?")) {
-                            s = s.substring(0, s.indexOf("?"));
-                            parametros = parametros.substring(parametros.indexOf("?") + 1);
-                        }
-
-                        Object id = null;
-                        if (!Strings.isNullOrEmpty(s)) {
-                            if (s.startsWith("s")) id = s.substring(1);
-                            else if (s.startsWith("l")) id = Long.parseLong(s.substring(1));
-                            else if (s.startsWith("i")) id = Integer.parseInt(s.substring(1));
-                        }
-
-                        AbstractEditorView ev = view.getNewEditorView((jsonDatosIniciales != null) ? new Data(jsonDatosIniciales) : null).setInitialId(id);
-
-                        if (!Strings.isNullOrEmpty(parametros)) {
-                            String[] tx = parametros.split("&");
-                            for (String p : tx) if (p.contains("=")) {
-                                String k = p.split("=")[0];
-                                String v = p.split("=")[1];
-                                if ("q".equals(k)) ev.setListQl(new String(BaseEncoding.base64().decode(v)));
-                                else if ("pos".equals(k)) ev.setListPos(Integer.parseInt(v));
-                                else if ("count".equals(k)) ev.setListCount(Integer.parseInt(v));
-                                else if ("rpp".equals(k)) ev.setListRowsPerPage(Integer.parseInt(v));
-                                else if ("page".equals(k)) ev.setListPage(Integer.parseInt(v));
-                                else if ("listfragment".equals(k)) ev.setListFragment(new String(BaseEncoding.base64().decode(v)));
-                            } else {
-                                System.out.println("parámetro " + p + " sin valor");
-                            }
-                        }
-
-
-                        ev.setGranted(data.get("area") != null && data.get("menu") != null);
-
-                        ev.setArea((AbstractArea) data.get("area"));
-                        ev.setMenu((MenuEntry) data.get("menu"));
-
-                        return ev;
                     } else {
-                        view.setParametros(parametros);
-                    }
 
-                    if (view instanceof AbstractCRUDView) {
-                        ((AbstractCRUDView) view).addListener(new CRUDListener() {
-                            @Override
-                            public void openEditor(AbstractEditorView e, boolean inNewTab) {
-                                e.setListFragment(MateuUI.getCurrentFragment());
-                                MateuUI.openView(e, inNewTab);
+                        String[] t = vn.split("\\.\\.", -1);
+                        String ed = t[0];
+                        String vd = t[1];
+                        String qf = (!Strings.isNullOrEmpty(t[2]))?new String(BaseEncoding.base64().decode(t[2]), Charsets.UTF_8):null;
+                        String jsonDatosIniciales = (!Strings.isNullOrEmpty(t[3]))?new String(BaseEncoding.base64().decode(t[3]), Charsets.UTF_8):null;
+
+
+
+
+                        view = new MDDJPACRUDView(new ERPServiceImpl().getMetaData(MateuUI.getApp().getUserData(), ed, vd, qf));
+                        view.setInitialData((jsonDatosIniciales != null) ? new Data(jsonDatosIniciales) : null);
+
+                        view.setGranted(data.get("area") != null && data.get("menu") != null);
+
+                        if (vn.endsWith("edit")) {
+
+                            String s = parametros;
+
+                            if (s.contains("?")) {
+                                s = s.substring(0, s.indexOf("?"));
+                                parametros = parametros.substring(parametros.indexOf("?") + 1);
                             }
-                        });
+
+                            Object id = null;
+                            if (!Strings.isNullOrEmpty(s)) {
+                                if (s.startsWith("s")) id = s.substring(1);
+                                else if (s.startsWith("l")) id = Long.parseLong(s.substring(1));
+                                else if (s.startsWith("i")) id = Integer.parseInt(s.substring(1));
+                            }
+
+                            AbstractEditorView ev = ((MDDJPACRUDView)view).getNewEditorView((jsonDatosIniciales != null) ? new Data(jsonDatosIniciales) : null).setInitialId(id);
+
+                            if (!Strings.isNullOrEmpty(parametros)) {
+                                String[] tx = parametros.split("&");
+                                for (String p : tx) if (p.contains("=")) {
+                                    String k = p.split("=")[0];
+                                    String v = p.split("=")[1];
+                                    if ("q".equals(k)) ev.setListQl(new String(BaseEncoding.base64().decode(v)));
+                                    else if ("pos".equals(k)) ev.setListPos(Integer.parseInt(v));
+                                    else if ("count".equals(k)) ev.setListCount(Integer.parseInt(v));
+                                    else if ("rpp".equals(k)) ev.setListRowsPerPage(Integer.parseInt(v));
+                                    else if ("page".equals(k)) ev.setListPage(Integer.parseInt(v));
+                                    else if ("listfragment".equals(k)) ev.setListFragment(new String(BaseEncoding.base64().decode(v)));
+                                } else {
+                                    System.out.println("parámetro " + p + " sin valor");
+                                }
+                            }
+
+
+                            ev.setGranted(data.get("area") != null && data.get("menu") != null);
+
+                            ev.setArea((AbstractArea) data.get("area"));
+                            ev.setMenu((MenuEntry) data.get("menu"));
+
+                            return ev;
+                        } else {
+                            view.setParametros(parametros);
+                        }
+
+                        if (view instanceof AbstractCRUDView) {
+                            ((AbstractCRUDView) view).addListener(new CRUDListener() {
+                                @Override
+                                public void openEditor(AbstractEditorView e, boolean inNewTab) {
+                                    e.setListFragment(MateuUI.getCurrentFragment());
+                                    MateuUI.openView(e, inNewTab);
+                                }
+                            });
+                        }
                     }
 
                 } else {

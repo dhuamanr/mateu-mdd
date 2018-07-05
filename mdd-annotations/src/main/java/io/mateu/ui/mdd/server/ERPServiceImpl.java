@@ -1841,6 +1841,7 @@ public class ERPServiceImpl implements ERPService {
             Class viewClass = c;
             if (v != null) viewClass = v.getClass();
 
+            if (c.isAnnotationPresent(Entity.class)) data.set("_pmo", true);
             data.set("_entityClassName", c.getName());
 
             for (FieldInterfaced f : getAllFields(c)) if (f.isAnnotationPresent(Id.class)) {
@@ -2803,6 +2804,7 @@ public class ERPServiceImpl implements ERPService {
             if (m.getAnnotation(Action.class).callOnEnterKeyPressed()) a.set("_callonenterkeypressed", true);
             if (m.getAnnotation(Action.class).addAsButton()) a.set("_addasbutton", true);
             if (m.getAnnotation(Action.class).keepOpened()) a.set("_keepopened", true);
+            if (m.getAnnotation(Action.class).notifyDone()) a.set("_notifydone", true);
             a.set("_methodname", m.getName());
             a.set("_parameters", parameters);
             Data def;

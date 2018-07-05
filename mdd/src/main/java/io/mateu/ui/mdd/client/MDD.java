@@ -2,7 +2,10 @@ package io.mateu.ui.mdd.client;
 
 import io.mateu.ui.core.client.app.Callback;
 import io.mateu.ui.core.client.app.MateuUI;
+import io.mateu.ui.core.client.views.AbstractView;
 import io.mateu.ui.core.shared.Data;
+import io.mateu.ui.mdd.server.annotations.Caption;
+import io.mateu.ui.mdd.server.util.Helper;
 import io.mateu.ui.mdd.shared.ERPService;
 
 public class MDD {
@@ -41,5 +44,14 @@ public class MDD {
             }
         });
     }
+
+
+
+
+
+    public static void openPMO(Class pmoClass, Object id, boolean modifierPressed) {
+        MateuUI.openView(new PMOView(pmoClass), modifierPressed);
+    }
+
 
 }

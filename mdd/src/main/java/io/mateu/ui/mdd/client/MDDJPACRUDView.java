@@ -44,6 +44,7 @@ public class MDDJPACRUDView extends BaseJPACRUDView {
     private String rpcViewClassName;
     private String compositeClassName;
     private String queryFilters;
+    private boolean pmo;
 
     public MDDJPACRUDView(Data metadata) {
         init(metadata);
@@ -55,6 +56,7 @@ public class MDDJPACRUDView extends BaseJPACRUDView {
 
     public void init(Data metadata) {
         this.metadata = metadata;
+        this.pmo = metadata.containsKey("_pmo");
         this.entityClassName = metadata.getString("_entityClassName");
         this.idFieldName = metadata.getString("_idFieldName");
         this.viewClassName = metadata.getString("_viewClassName");
@@ -64,6 +66,10 @@ public class MDDJPACRUDView extends BaseJPACRUDView {
         setSums(metadata.getList("_sums"));
     }
 
+
+    public String getRpcViewClassName() {
+        return rpcViewClassName;
+    }
 
     @Override
     public String getViewIdBase() {
@@ -324,7 +330,7 @@ public class MDDJPACRUDView extends BaseJPACRUDView {
 
     }
 
-    private void buildFromMetadata(AbstractView view, Data metadata, boolean buildingSearchForm) {
+    public static void buildFromMetadata(AbstractView view, Data metadata, boolean buildingSearchForm) {
         buildFromMetadata(view.getForm(), metadata.getList("_fields"), buildingSearchForm);
         for (Data da : metadata.getList("_actions")) {
             if (da.getBoolean("_addasbutton")) {
@@ -340,23 +346,23 @@ public class MDDJPACRUDView extends BaseJPACRUDView {
         }
     }
 
-    private void buildFromMetadata(FieldContainer form, Data metadata, boolean buildingSearchForm) {
+    private static void buildFromMetadata(FieldContainer form, Data metadata, boolean buildingSearchForm) {
         buildFromMetadata(form, "", metadata.getList("_fields"), buildingSearchForm);
     }
 
-    private void buildFromMetadata(FieldContainer form, String prefix, Data metadata, boolean buildingSearchForm) {
+    private static void buildFromMetadata(FieldContainer form, String prefix, Data metadata, boolean buildingSearchForm) {
         buildFromMetadata(form, prefix, metadata.getList("_fields"), buildingSearchForm);
     }
 
-    private void buildFromMetadata(AbstractView view, List<Data> fieldsMetadata, boolean buildingSearchForm) {
+    private static void buildFromMetadata(AbstractView view, List<Data> fieldsMetadata, boolean buildingSearchForm) {
         buildFromMetadata(view.getForm(), fieldsMetadata, buildingSearchForm);
     }
 
-    private void buildFromMetadata(FieldContainer form, List<Data> fieldsMetadata, boolean buildingSearchForm) {
+    private static void buildFromMetadata(FieldContainer form, List<Data> fieldsMetadata, boolean buildingSearchForm) {
         buildFromMetadata(form, "", fieldsMetadata, buildingSearchForm);
     }
 
-    private void buildFromMetadata(FieldContainer originalContainer, String prefix, List<Data> fieldsMetadata, boolean buildingSearchForm) {
+    private static void buildFromMetadata(FieldContainer originalContainer, String prefix, List<Data> fieldsMetadata, boolean buildingSearchForm) {
 
         if (!"".equals(prefix)) prefix += "_";
 
@@ -1037,7 +1043,14 @@ public class MDDJPACRUDView extends BaseJPACRUDView {
         return as;
     }
 
-    private AbstractAction createAction(AbstractView v, Data da, MDDActionHelper h) {
+    private static AbstractAction createAction(AbstractView v, Data da, MDDActionHelper h) {
+
+
+        String rpcViewClassName = null;
+
+        if (v instanceof MDDJPACRUDView) rpcViewClassName = ((MDDJPACRUDView)v).getRpcViewClassName();
+
+        String finalRpcViewClassName = rpcViewClassName;
         return new AbstractAction(da.getString("_name"), da.getBoolean("_callonenterkeypressed")) {
             @Override
             public void run() {
@@ -1055,7 +1068,7 @@ public class MDDJPACRUDView extends BaseJPACRUDView {
                 for (Data dp : da.getList("_parameters")) {
                     String n = dp.getString("_id");
                     if (MetaData.FIELDTYPE_LISTDATA.equals(dp.getString("_type"))) {
-                        parameters.set(n, getSelection());
+                        parameters.set(n, ((io.mateu.ui.core.client.views.ListView)v).getSelection());
                     } else if (MetaData.FIELDTYPE_DATA.equals(dp.getString("_type"))) {
                         List<String> errors = v.getForm().validate();
                         if (errors.size() > 0) {
@@ -1088,7 +1101,7 @@ public class MDDJPACRUDView extends BaseJPACRUDView {
                                 @Override
                                 public void onSuccess(Data data) {
                                     parameters.set(finalWizardParameterName, data);
-                                    ((ERPServiceAsync) MateuUI.create(ERPService.class)).runInServer(MateuUI.getApp().getUserData(), da.getString("_entityClassName"), da.getString("_methodname"), parameters, rpcViewClassName, (!Strings.isNullOrEmpty(rpcViewClassName))?MDDJPACRUDView.this.getForm().getData():null, new Callback<Object>() {
+                                    ((ERPServiceAsync) MateuUI.create(ERPService.class)).runInServer(MateuUI.getApp().getUserData(), da.getString("_entityClassName"), da.getString("_methodname"), parameters, finalRpcViewClassName, (!Strings.isNullOrEmpty(finalRpcViewClassName))?((MDDJPACRUDView)v).getForm().getData():null, new Callback<Object>() {
                                         @Override
                                         public void onSuccess(Object result) {
                                             h.onSuccess(result);
@@ -1118,7 +1131,7 @@ public class MDDJPACRUDView extends BaseJPACRUDView {
 
                                 @Override
                                 public void onOk(Data data) {
-                                    ((ERPServiceAsync) MateuUI.create(ERPService.class)).runInServer(MateuUI.getApp().getUserData(), da.getString("_entityClassName"), da.getString("_methodname"), getForm().getData(), rpcViewClassName, (!Strings.isNullOrEmpty(rpcViewClassName))?MDDJPACRUDView.this.getForm().getData():null, new Callback<Object>() {
+                                    ((ERPServiceAsync) MateuUI.create(ERPService.class)).runInServer(MateuUI.getApp().getUserData(), da.getString("_entityClassName"), da.getString("_methodname"), getForm().getData(), finalRpcViewClassName, (!Strings.isNullOrEmpty(finalRpcViewClassName))?((MDDJPACRUDView)v).getForm().getData():null, new Callback<Object>() {
                                         @Override
                                         public void onSuccess(Object result) {
                                             h.onSuccess(result);
@@ -1152,7 +1165,7 @@ public class MDDJPACRUDView extends BaseJPACRUDView {
 
                             @Override
                             public void run() {
-                                ((ERPServiceAsync)MateuUI.create(ERPService.class)).runInServer(MateuUI.getApp().getUserData(), da.getString("_entityClassName"), da.getString("_methodname"), parameters, rpcViewClassName, (!Strings.isNullOrEmpty(rpcViewClassName))?MDDJPACRUDView.this.getForm().getData():null, new Callback<Object>() {
+                                ((ERPServiceAsync)MateuUI.create(ERPService.class)).runInServer(MateuUI.getApp().getUserData(), da.getString("_entityClassName"), da.getString("_methodname"), parameters, finalRpcViewClassName, (!Strings.isNullOrEmpty(finalRpcViewClassName))?((MDDJPACRUDView)v).getForm().getData():null, new Callback<Object>() {
                                     @Override
                                     public void onSuccess(Object result) {
                                         h.onSuccess(result);
@@ -1160,7 +1173,7 @@ public class MDDJPACRUDView extends BaseJPACRUDView {
                                 });
                             }
                         });
-                    } else ((ERPServiceAsync)MateuUI.create(ERPService.class)).runInServer(MateuUI.getApp().getUserData(), da.getString("_entityClassName"), da.getString("_methodname"), parameters, rpcViewClassName, (!Strings.isNullOrEmpty(rpcViewClassName))?MDDJPACRUDView.this.getForm().getData():null, new Callback<Object>() {
+                    } else ((ERPServiceAsync)MateuUI.create(ERPService.class)).runInServer(MateuUI.getApp().getUserData(), da.getString("_entityClassName"), da.getString("_methodname"), parameters, finalRpcViewClassName, (!Strings.isNullOrEmpty(finalRpcViewClassName))?((MDDJPACRUDView)v).getForm().getData():null, new Callback<Object>() {
                         @Override
                         public void onSuccess(Object result) {
                             h.onSuccess(result);
@@ -1174,7 +1187,7 @@ public class MDDJPACRUDView extends BaseJPACRUDView {
 
     }
 
-    private AbstractWizard crearWizard(String title, Data initialData, WizardPageVO vo, Callback<Data> datacallback) {
+    private static AbstractWizard crearWizard(String title, Data initialData, WizardPageVO vo, Callback<Data> datacallback) {
 
         AbstractWizard w = new BaseWizard(title) {
 
@@ -1342,7 +1355,7 @@ public class MDDJPACRUDView extends BaseJPACRUDView {
         });
     }
 
-    private AbstractAction createAction(AbstractView v, Data da) {
+    public static AbstractAction createAction(AbstractView v, Data da) {
         return createAction(v, da, new MDDActionHelper() {
             @Override
             public void onSuccess(Object result) {
@@ -1354,7 +1367,7 @@ public class MDDJPACRUDView extends BaseJPACRUDView {
                 } else if (result instanceof Data) {
                     v.getForm().setData((Data) result);
                 } else if (result instanceof Void || result == null) {
-                    MateuUI.notifyDone("Done!");
+                    if (da.containsKey("_notifydone")) MateuUI.notifyDone("Done!");
                 } else {
                     MateuUI.alert("" + result);
                 }
@@ -1367,7 +1380,7 @@ public class MDDJPACRUDView extends BaseJPACRUDView {
         });
     }
 
-    private AbstractAction createAction(MDDLink l) {
+    private static AbstractAction createAction(MDDLink l) {
         return new AbstractAction(l.getCaption()) {
             @Override
             public void run() {
