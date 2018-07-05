@@ -61,4 +61,9 @@ public class MyServerSideApp extends BaseServerSideApp {
     public void updateFoto(String s, FileLocator fileLocator) throws Throwable {
         throw new Exception("Please fill this functionality.");
     }
+
+    @Override
+    public Object selectIdAtPos(String s, int i) throws Throwable {
+        return null;
+    }
 }

@@ -13,6 +13,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -29,12 +31,16 @@ public class Basico {
     @NotNull
     private String name = "Hola!!!";
 
-    private int entero;
+    private int entero = 1;
 
-    private double doble;
+    private double doble = 2.3;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
+
+    private LocalDate ld = LocalDate.now();
+
+    private LocalDateTime ldt = LocalDateTime.now();
 
 
     @Temporal(TemporalType.TIMESTAMP)

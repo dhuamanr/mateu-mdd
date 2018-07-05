@@ -1,4 +1,4 @@
-package io.mateu.mdd.core.util;
+package io.mateu.ui.mdd.server.util;
 
 
 import com.Ostermiller.util.CSVParser;
@@ -15,7 +15,9 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
-import io.mateu.mdd.core.workflow.WorkflowEngine;
+import io.mateu.ui.core.server.SQLTransaction;
+import io.mateu.ui.core.server.Utils;
+import io.mateu.ui.mdd.server.workflow.WorkflowEngine;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;

@@ -3,7 +3,7 @@
     <parent>
         <artifactId>mdd-parent</artifactId>
         <groupId>io.mateu.ui</groupId>
-        <version>0.0.1</version>
+        <version>0.0.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -40,19 +40,19 @@
         <dependency>
             <groupId>io.mateu.jpa</groupId>
             <artifactId>common</artifactId>
-            <version>0.0.1</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>io.mateu.ui</groupId>
             <artifactId>core</artifactId>
-            <version>0.0.1</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>io.mateu.ui</groupId>
             <artifactId>mdd-annotations</artifactId>
-            <version>0.0.1</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -144,16 +144,8 @@
         <dependency>
             <groupId>io.mateu.ui</groupId>
             <artifactId>mdd</artifactId>
-            <version>0.0.1</version>
+            <version>${project.version}</version>
         </dependency>
-
-
-        <dependency>
-            <groupId>io.mateu.ui.mdd</groupId>
-            <artifactId>mdd-server</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-
 
     </dependencies>
 
@@ -171,7 +163,7 @@
                 <dependency>
                     <groupId>io.mateu.ui</groupId>
                     <artifactId>port-vaadin</artifactId>
-                    <version>0.0.1</version>
+                    <version>${project.version}</version>
                     <type>war</type>
                     <scope>compile</scope>
                 </dependency>
@@ -339,7 +331,7 @@
                 <dependency>
                     <groupId>io.mateu.ui</groupId>
                     <artifactId>port-javafx</artifactId>
-                    <version>0.0.1</version>
+                    <version>${project.version}</version>
                     <scope>compile</scope>
                 </dependency>
             </dependencies>
